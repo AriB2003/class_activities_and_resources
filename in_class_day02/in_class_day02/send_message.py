@@ -1,5 +1,6 @@
 """ This script explores publishing ROS messages in ROS using Python """
 import rclpy
+import random
 from rclpy.node import Node
 from std_msgs.msg import Header
 from geometry_msgs.msg import Point, PointStamped
@@ -18,7 +19,8 @@ class SendMessageNode(Node):
         """Prints a message to the terminal."""
         # print('Hi from in_class_day02.')
         my_header = Header(stamp=self.get_clock().now().to_msg(), frame_id="odom")
-        my_point = Point(x=1.0, y=2.0, z=0.0)
+        my_point = Point(x=6*(random.random()-0.5), y=6*(random.random()-0.5), z=6*(random.random()-0.5))
+        
         my_point_stamped = PointStamped(header=my_header, point=my_point)
         print(my_point_stamped)
         self.publisher.publish(my_point_stamped)
