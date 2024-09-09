@@ -11,15 +11,22 @@ class SendMessageNode(Node):
         """Initializes the SendMessageNode. No inputs."""
         super().__init__('send_message_node')
         # Create a timer that fires ten times per second
-        timer_period = 0.1
-        self.timer = self.create_timer(timer_period, self.run_loop)
+        self.timer_period = 0.1
+        self.timer = self.create_timer(self.timer_period, self.run_loop)
         self.publisher = self.create_publisher(PointStamped, 'my_point', 10)
+        self.accel = [0,0,0]
+        self.vel = [0,0,0]
+        self.pos = [0,0,0]
 
     def run_loop(self):
         """Prints a message to the terminal."""
-        # print('Hi from in_class_day02.')
+        self.accel = [3*(random.random()-0.5),3*(random.random()-0.5),3*(random.random()-0.5)]
+        self.vel = [v+a*self.timer_period for a,v in zip(self.accel, self.vel)]
+        self.vel = [max(min(v,1),-1) for v in self.vel]
+        self.pos = [p+v*self.timer_period for v,p in zip(self.vel, self.pos)]
+        self.pos = [p if -5<p<5 else -1*p for p in self.pos]
         my_header = Header(stamp=self.get_clock().now().to_msg(), frame_id="odom")
-        my_point = Point(x=6*(random.random()-0.5), y=6*(random.random()-0.5), z=6*(random.random()-0.5))
+        my_point = Point(x=self.pos[0], y=self.pos[1], z=self.pos[2])
         
         my_point_stamped = PointStamped(header=my_header, point=my_point)
         print(my_point_stamped)
